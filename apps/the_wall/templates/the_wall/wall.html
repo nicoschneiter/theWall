@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <style>
+      *{
+        margin:0px;
+        padding:0px;
+      }
+      .header h1, .header h2, .header a{
+        display:inline-block;
+        margin:15px 50px;
+      }
+      .header {
+        border-bottom:2px solid black;
+      }
+      .container button{
+        margin-left:89%
+      }
+      .comment button{
+        display:inline-block;
+        margin-left:0px;
+      }
+      .red {
+        color:red;
+      }
+      .green{
+        color:green;
+      }
+    </style>
+  </head>
+  <body>
+    <div class='header'>
+      <h1>CodingDojo Wall</h1>
+      <h2>Welcome {{request.session.first_name}}</h2>
+      <a href='logout/'>Log off</a>
+    </div>
+    <div class = 'container'>
+      <h3>Post a message</h3>
+      <form action="{% url 'create' %}" method='post'>
+        {% csrf_token %}
+        <div class="form-group">
+          <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name='posting'></textarea>
+        </div>
+        <button type='submit'>Post a message</button>
+      </form>
+    </div>
+      {% for i in selected_m %}
+    <form action ='delete/' method='post'>
+      {% csrf_token %}
+    <div class='container message'>
+      <h4>{{i.user.first_name}} - {{i.created_at}} </h4>
+      <input type='hidden' name='sid' value="{{i.user.id}}">
+      <input type='hidden' name='mid' value="{{i.id}}">
+      <p class = 'red'>{{i.message}}</p>
+      {% if i.user.id == request.session.id %}
+      <button type='submit'>Delete</button>
+      {% endif %}
+    </form>
+      {% for j in selected_c %}
+      {% if j.message.id == i.id %}
+      <form action='delete_comment/' method='post'>
+        {% csrf_token %}
+      <div class='container comment'>
+        <h4>{{j.user.first_name}} - {{j.created_at}} </h4>
+        <p class = 'green'>{{j.comment}}</p>
+        <input type='hidden' name='sid' value="{{j.user.id}}">
+        <input type='hidden' name='cid' value="{{j.id}}">
+        {% if j.user.id == request.session.id %}
+        <button type='submit'>Delete</button>
+        {% endif %}
+      </div>
+      </form>
+      {% endif %}
+      {% endfor %}
+    </div>
+    <div class='container'>
+    <form action ="{% url 'create_comment' %}" method='post'>
+      {% csrf_token %}
+      <h3>Post a comment</h3>
+        <div class="form-group">
+          <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name='posting'></textarea>
+        </div>
+        <input type='hidden' name='mid' value = "{{i.id}}">
+        <button type='submit'>Post a message</button>
+    </form>
+    </div>
+    {% endfor %}
+  </body>
+</html>
